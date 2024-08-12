@@ -11,16 +11,18 @@
     <form id="taskForm">
 
         <input id="name" placeholder="Nom de la tâche">
-        <input id="type" placeholder="Type de la tâche">
-        <input id="description" placeholder="Description">
+        <select id="status" placeholder="Choisir l'état de la tâche">
+            <option value="in-progress">En cours</option>
+            <option value="completed">Fini</option>
+        </select>
 
         <button type="submit" id="taskSubmit">Ajouter</button>
+
     </form>
     <h1>Liste des tâches</h1>
     <table id="TaskList">
         <th>Nom</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>État</th>
     </table>
 </body>
 </html>
