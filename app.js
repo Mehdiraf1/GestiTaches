@@ -103,8 +103,10 @@ window.onload = function () {
                     }
                     
                     addTaskToTable(task.title, task.status);
+                    
                 });
             })
+            .catch(error => console.error('Erreur lors de la récupération des tâches suggérées:', error));
     }
 
     /*___________________________DOM__________________________________*/
