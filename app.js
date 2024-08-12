@@ -8,6 +8,26 @@ window.onload = function () {
     var desc = document.getElementById("description");
     
 
+    /*______________________LocalStorage_____________________________*/
+    // fonction de sauvegarde dans localStorage
+    function savetask() {
+
+        var tasks = []
+        for (var i = 1; i < tasktable.rows.length; i++) {
+
+            var task = {
+                name: tasktable.rows[i].cells[0].textContent,
+                type: tasktable.rows[i].cells[1].textContent,
+                description: tasktable.rows[i].cells[2].textContent
+            };
+
+            tasks.push(task);
+        }
+        localStorage.setItem("tasks", JSON.stringify(tasks));
+    }
+    /*________________________________________________________________*/
+
+    /*___________________________DOM__________________________________*/
     monForm.onsubmit = function (e) {
 
         e.preventDefault();
@@ -33,10 +53,14 @@ window.onload = function () {
             deleteButton.addEventListener("click", function() {
                 var ligne = this.parentNode.parentNode; // ligne = <tr> qui contient notre bouton
                 ligne.parentNode.removeChild(ligne); // ligne.parentNode = <tbody>
+                savetask(); // sauvegarder dans localStorage après suppression
             });
 
             // Ajouter le bouton à notre cellule
             taskdelete.appendChild(deleteButton);
+
+            // Sauvegarder dans localStorage
+            savetask();
 
             // Rénitialise les champs du formulaire
             monForm.reset();
@@ -47,7 +71,8 @@ window.onload = function () {
         
         }
     }
-
+    /*_______________________________________________________________*/
 
     
+
 }
