@@ -25,6 +25,48 @@ window.onload = function () {
         }
         localStorage.setItem("tasks", JSON.stringify(tasks));
     }
+
+
+    // fonction de chargement de données depuis localStorage
+    function loadtask() {
+
+        var tasks = JSON.parse(localStorage.getItem("tasks"));
+
+        if (tasks == null) {
+            tasks = []
+        };
+
+        tasks.forEach(function(task) {
+
+            var newrow = tasktable.insertRow();
+
+            var taskname = newrow.insertCell(0);
+            var tasktype = newrow.insertCell(1);
+            var taskdesc = newrow.insertCell(2);
+            var taskdelete = newrow.insertCell(3);
+
+            taskname.textContent = task.name;
+            tasktype.textContent = task.type;
+            taskdesc.textContent = task.description;
+
+            var deleteButton = document.createElement("button"); // Créer un élement html <button>
+            deleteButton.type = "button";
+            deleteButton.textContent = "Supprimer";
+            deleteButton.addEventListener("click", function() {
+                var ligne = this.parentNode.parentNode; 
+                ligne.parentNode.removeChild(ligne); 
+                savetask();
+            });
+
+            taskdelete.appendChild(deleteButton);
+        });
+
+    }
+
+
+    // charger les données
+    loadtask();
+
     /*________________________________________________________________*/
 
     /*___________________________DOM__________________________________*/
