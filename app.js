@@ -4,8 +4,7 @@ window.onload = function () {
 
     var tasktable = document.getElementById("TaskList");
     var name = document.getElementById("name");
-    var type = document.getElementById("type");
-    var desc = document.getElementById("description");
+    var status = document.getElementById("status");
     
 
     /*______________________LocalStorage_____________________________*/
@@ -17,8 +16,7 @@ window.onload = function () {
 
             var task = {
                 name: tasktable.rows[i].cells[0].textContent,
-                type: tasktable.rows[i].cells[1].textContent,
-                description: tasktable.rows[i].cells[2].textContent
+                status: tasktable.rows[i].cells[1].textContent,
             };
 
             tasks.push(task);
@@ -31,43 +29,85 @@ window.onload = function () {
     function loadtask() {
 
         var tasks = JSON.parse(localStorage.getItem("tasks"));
-
+        
         if (tasks == null) {
             tasks = []
-        };
+        }
+        
+        if (tasks.length > 0) {
 
-        tasks.forEach(function(task) {
+            tasks.forEach(function(task) {
 
-            var newrow = tasktable.insertRow();
+                var newrow = tasktable.insertRow();
 
-            var taskname = newrow.insertCell(0);
-            var tasktype = newrow.insertCell(1);
-            var taskdesc = newrow.insertCell(2);
-            var taskdelete = newrow.insertCell(3);
+                var taskname = newrow.insertCell(0);
+                var taskstatus = newrow.insertCell(1);
+                var taskdelete = newrow.insertCell(2);
 
-            taskname.textContent = task.name;
-            tasktype.textContent = task.type;
-            taskdesc.textContent = task.description;
+                taskname.textContent = task.name;
+                taskstatus.textContent = task.status;
 
-            var deleteButton = document.createElement("button"); // Créer un élement html <button>
-            deleteButton.type = "button";
-            deleteButton.textContent = "Supprimer";
-            deleteButton.addEventListener("click", function() {
-                var ligne = this.parentNode.parentNode; 
-                ligne.parentNode.removeChild(ligne); 
-                savetask();
-            });
+
+                var deleteButton = document.createElement("button"); // Créer un élement html <button>
+                deleteButton.type = "button";
+                deleteButton.textContent = "Supprimer";
+                deleteButton.addEventListener("click", function() {
+                    var ligne = this.parentNode.parentNode; 
+                    ligne.parentNode.removeChild(ligne); 
+                    savetask();
+                });
 
             taskdelete.appendChild(deleteButton);
-        });
-
+            });
+        };
     }
 
-
-    // charger les données
-    loadtask();
-
     /*________________________________________________________________*/
+
+    // fonction pour ajouter la tâche récupérée depuis l'API
+    function addTaskToTable(name, status) {
+        
+        var newrow = tasktable.insertRow();
+
+        var taskname = newrow.insertCell(0);
+        var taskstatus = newrow.insertCell(1);
+        var taskdelete = newrow.insertCell(2);
+
+        taskname.textContent = name;
+        taskstatus.textContent = status;
+
+
+        var deleteButton = document.createElement("button"); // Créer un élement html <button>
+        deleteButton.type = "button";
+        deleteButton.textContent = "Supprimer";
+        deleteButton.addEventListener("click", function() {
+            var ligne = this.parentNode.parentNode; 
+            ligne.parentNode.removeChild(ligne); 
+            savetask();
+        });
+
+            taskdelete.appendChild(deleteButton);
+    };
+
+    // Fonction pour récupérer les suggestions de tâches depuis l'API JSONPlaceholder 
+    function fetchTask() {
+        fetch('https://jsonplaceholder.typicode.com/todos?_limit=5')
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(task => {
+                    
+                    if (task.completed == true) {
+                        task.status = "Fini";
+                    } else {
+                        task.status = "En cours";
+                    }
+                    
+                    addTaskToTable(task.title, task.status);
+                    
+                });
+            })
+            .catch(error => console.error('Erreur lors de la récupération des tâches suggérées:', error));
+    }
 
     /*___________________________DOM__________________________________*/
     monForm.onsubmit = function (e) {
@@ -79,13 +119,11 @@ window.onload = function () {
             var newrow = tasktable.insertRow();
 
             var taskname = newrow.insertCell(0);
-            var tasktype = newrow.insertCell(1);
-            var taskdesc = newrow.insertCell(2);
-            var taskdelete = newrow.insertCell(3);
+            var taskstatus = newrow.insertCell(1);
+            var taskdelete = newrow.insertCell(2);
 
             taskname.textContent = name.value;
-            tasktype.textContent = type.value;
-            taskdesc.textContent = desc.value;
+            taskstatus.textContent = status.value;
 
             // Création d'un bouton supprimer
 
@@ -117,4 +155,10 @@ window.onload = function () {
 
     
 
+    /*________________Chargement des éléments du tableau_____________*/
+    // Charger les données depuis localStorage
+    loadtask();
+    // Charger les tâches depuis l'API JSONPlaceholder
+    fetchTask();
+    /*______________________________________________________________*/
 }
